@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,28 +16,48 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ListWidget(),
+      home: const ListWidget(),
     );
   }
 }
 
-class ListWidget extends StatelessWidget {
-  ListWidget({super.key});
-  final List<Widget> items = List.generate(1000, (index) {
-    final color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+class ListWidget extends StatefulWidget {
+  const ListWidget({super.key});
 
-    return ListTile(
-      tileColor: color,
-      title: Text(
-        'Item ${index + 1}',
-        textAlign: TextAlign.center,
-      ),
-    );
-  });
+  @override
+  State<ListWidget> createState() => _ListWidgetState();
+}
+
+class _ListWidgetState extends State<ListWidget> {
+  List<Widget> items = [];
+
+  void generateItems() {
+    Stopwatch stopwatch = Stopwatch()..start();
+    List<Widget> newItems = List.generate(1000, (index) {
+      final color = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+      return ListTile(
+        tileColor: color,
+        title: Text(
+          'Item ${index + 1}',
+          textAlign: TextAlign.center,
+        ),
+      );
+    });
+    stopwatch.stop();
+    debugPrint('List generated in ${stopwatch.elapsedMilliseconds} ms');
+
+    setState(() {
+      items = newItems;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: generateItems,
+        child: const Icon(Icons.refresh),
+      ),
       appBar: AppBar(
         title: const Text("List Demo"),
       ),
